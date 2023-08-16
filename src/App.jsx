@@ -1,29 +1,17 @@
-import { useState, useContext } from "react";
-import useFetch from "./helpers/useFetch";
-import Header from "./components/Header";
-import Main from "./components/Main";
-import { MovieContext } from "./helpers/MovieContext";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import CssBaseline from "@mui/material/CssBaseline";
+import Watched from "./components/Watched";
+import Favorites from "./components/Favorites";
+import BrowsePage from "./components/BrowsePage";
+// import ApiTest from "./components/ApiTest";
 export default function App() {
-  const context = useContext(MovieContext);
-  // const [searchResults, setSearchResults] = useState([]); // State to hold results from search
-  // const [searchQuery, setSearchQuery] = useState("");
-  // const [activeTab, setActiveTab] = useState(0);
-  //search with s and t
-
   return (
-    <div>
-      <Header
-      // activeTab={activeTab}
-      // handleSearch={handleSearch}
-      // searchQuery={searchQuery}
-      // setSearchQuery={setSearchQuery}
-      />
-      <Main
-      // searchResults={searchResults}
-      // activeTab={activeTab}
-      // setActiveTab={setActiveTab}
-      // loading={loading}
-      />
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<BrowsePage />} />
+        <Route path="watched" element={<Watched />} />
+        <Route path="favorite" element={<Favorites />} />
+      </Routes>
+    </BrowserRouter>
   );
 }

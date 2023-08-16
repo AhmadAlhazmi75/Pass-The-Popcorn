@@ -5,7 +5,7 @@ export default function useFetch(baseUrl) {
 
   function get(url) {
     return new Promise((resolve, reject) => {
-      fetch(baseUrl + url + "&apikey=c7ea7127")
+      fetch(baseUrl + url)
         .then((response) => response.json())
         .then((data) => {
           if (!data) {

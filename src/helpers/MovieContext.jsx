@@ -3,15 +3,39 @@ import useFetch from "./useFetch";
 const MovieContext = createContext();
 
 function MovieProvider({ children }) {
-  const [searchResults, setSearchResults] = useState([]); // State to hold results from search
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeTab, setActiveTab] = useState(0);
-  const { get, loading } = useFetch("https://www.omdbapi.com/?s=");
+  const { get, loading } = useFetch("https://api.themoviedb.org/3/");
+  const [searchResults, setSearchResults] = useState([]); // Initialize with an empty array
 
-  const handleSearch = (searchQuery) => {
-    if (searchQuery === "") return;
-    get(searchQuery).then((data) => setSearchResults(data.Search));
+  const handleSearch = async (searchQuery) => {
+    if (searchQuery === "") {
+      // If search query is empty, fetch popular movies
+      const popularData = await get(
+        "movie/popular?api_key=22b766fd305a80b9d474ac2f1eb7aa83"
+      );
+      setSearchResults(popularData.results);
+    } else {
+      // Fetch search results based on searchQuery
+      // const searchData = await get(
+      //   `search/keyword?query=${searchQuery}&api_key=22b766fd305a80b9d474ac2f1eb7aa83&page=1`
+      // );
+      const results = await get(
+        `search/multi?query=${searchQuery}&include_adult=true&language=en-US&page=1&api_key=22b766fd305a80b9d474ac2f1eb7aa83&page=1`
+      );
+      setSearchResults(results.results);
+      console.log(results.results);
+    }
   };
+
+  useEffect(() => {
+    // Fetch popular movies initially
+    get("movie/popular?api_key=22b766fd305a80b9d474ac2f1eb7aa83").then(
+      (data) => {
+        setSearchResults(data.results);
+        console.log(data);
+      }
+    );
+  }, []); // Empty dependency array to run only once
 
   const [favorites, setFavorites] = useState(() => {
     const storedFavorites = localStorage.getItem("favorites");
@@ -38,8 +62,6 @@ function MovieProvider({ children }) {
         setSearchQuery,
         searchResults,
         setSearchResults,
-        activeTab,
-        setActiveTab,
         handleSearch,
         watched,
         setWatched,
@@ -52,5 +74,4 @@ function MovieProvider({ children }) {
     </MovieContext.Provider>
   );
 }
-
 export { MovieContext, MovieProvider };

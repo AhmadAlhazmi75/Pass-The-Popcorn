@@ -16,22 +16,20 @@ import { MovieContext } from "../helpers/MovieContext";
 
 export default function MovieCard({ movie }) {
   const context = useContext(MovieContext);
-  const { get } = useFetch("https://www.omdbapi.com/?i=");
+  // const { get } = useFetch("https://www.omdbapi.com/?i=");
   const [details, setDetails] = useState(null);
 
   const isFavorite = (movie) => {
-    return context.favorites?.some(
-      (content) => content.imdbID === movie.imdbID
-    );
+    return context.favorites?.some((content) => content.id === movie.id);
   };
 
   const isWatched = (movie) => {
-    return context.watched?.some((con) => con.imdbID === movie.imdbID);
+    return context.watched?.some((con) => con.id === movie.id);
   };
 
-  useEffect(() => {
-    get(movie.imdbID).then((data) => setDetails(data));
-  }, []);
+  // useEffect(() => {
+  //   get(movie.imdbID).then((data) => setDetails(data));
+  // }, [movie.imdbID]);
 
   const handleAddFavorite = useCallback(
     (e) => {
@@ -46,9 +44,7 @@ export default function MovieCard({ movie }) {
   const handleDeleteFavorite = useCallback(
     (e) => {
       e.preventDefault();
-      context.setFavorites((prev) =>
-        prev.filter((con) => con.imdbID !== movie.imdbID)
-      );
+      context.setFavorites((prev) => prev.filter((con) => con.id !== movie.id));
       console.log("Deleted from favorites");
     },
     [context, movie]
@@ -86,22 +82,23 @@ export default function MovieCard({ movie }) {
           flexDirection: "column", // Stack elements vertically
           fontFamily: "mono",
         }}
-        key={movie.imdbID}
+        key={movie.id}
       >
         <CardHeader
-          title={`${movie.Title} (${movie.Year})`}
-          subheader={details?.Director}
+          title={`${movie.title ? movie.title : movie.name} `}
+          // (${movie.release_date})
+          subheader={movie?.release_date}
         />
         <CardMedia
           component="img"
           loading="lazy"
           height="250" // Set a consistent height for the image
           image={
-            movie.Poster !== "N/A"
-              ? movie.Poster
+            movie.poster_path !== "N/A"
+              ? "https://image.tmdb.org/t/p/original" + movie.poster_path
               : "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/1024px-No_image_available.svg.png"
           }
-          alt={movie.Title}
+          alt={movie.title}
           sx={{
             padding: "1em 1em 0 1em",
             objectFit: "contain",
@@ -114,7 +111,7 @@ export default function MovieCard({ movie }) {
             color="text.secondary"
             noWrap // Limit the text to a single line
           >
-            {details?.Genre}
+            {/* {details?.Genre} */}
           </Typography>
         </CardContent>
 
@@ -144,7 +141,7 @@ export default function MovieCard({ movie }) {
           </Grid>
           <Grid item xs={5.5}></Grid>
           <Grid item xs={2}>
-            {details?.Ratings?.at(0)?.Value ?? "N/A"}
+            {/* {details?.Ratings?.at(0)?.Value ?? "N/A"} */}
           </Grid>
         </Grid>
       </Card>
