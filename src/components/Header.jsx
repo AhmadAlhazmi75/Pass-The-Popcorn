@@ -1,24 +1,27 @@
 /* eslint-disable react/prop-types */ // TODO: upgrade to latest eslint tooling
 
-import React, { useEffect } from "react"; // Import useState
+import React, { useEffect, useContext } from "react";
+import { MovieContext } from "../helpers/MovieContext";
+// Import useState
 
-function Header({ handleSearch, searchQuery, setSearchQuery, activeTab }) {
+function Header() {
+  const context = useContext(MovieContext); // Import handleSearch function from MovieContext
   // State to hold the search query
   useEffect(() => {
-    if (searchQuery !== "") {
-      handleSearch(searchQuery);
+    if (context.searchQuery !== "") {
+      context.handleSearch(context.searchQuery);
     }
-  }, [searchQuery, handleSearch]);
+  }, [context.searchQuery, context.handleSearch, context]);
 
   function handleChange(e) {
-    setSearchQuery(e.target.value);
+    context.setSearchQuery(e.target.value);
   }
 
   return (
     <header className="flex items-center justify-center px-4 py-4 bg-black md:px-8">
       <img
         className="h-16 md:h-24"
-        src="../../src/assets/logo.png"
+        src="https://i.ibb.co/TbCFSBh/illustration-graphic-of-popcorn-logo-free-vector-removebg-preview.png"
         alt="logo"
       />
       <div className="flex items-center justify-center flex-1 max-w-xl">
@@ -28,9 +31,9 @@ function Header({ handleSearch, searchQuery, setSearchQuery, activeTab }) {
           className="w-full px-2 py-2 text-black bg-white rounded md:px-4"
           type="text"
           placeholder="Search"
-          value={searchQuery} // Bind input value to the searchQuery state
+          value={context.searchQuery} // Bind input value to the searchQuery state
           onChange={handleChange} // Update searchQuery state on input change
-          disabled={activeTab !== 0} // Disable input when on Watched Movies tab
+          disabled={context.activeTab !== 0} // Disable input when on Watched Movies tab
         />
       </div>
     </header>

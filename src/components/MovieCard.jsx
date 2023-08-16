@@ -9,26 +9,24 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import useFetch from "../helpers/useFetch";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
-import { useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import Grid from "@mui/material/Grid";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-export default function MovieCard({
-  movie,
-  setFavorites,
-  favorites,
-  setWatched,
-  watched,
-  key,
-}) {
+import { MovieContext } from "../helpers/MovieContext";
+
+export default function MovieCard({ movie }) {
+  const context = useContext(MovieContext);
   const { get } = useFetch("https://www.omdbapi.com/?i=");
-  const [details, setDetails] = React.useState(null);
+  const [details, setDetails] = useState(null);
 
   const isFavorite = (movie) => {
-    return favorites?.some((content) => content.imdbID === movie.imdbID);
+    return context.favorites?.some(
+      (content) => content.imdbID === movie.imdbID
+    );
   };
 
   const isWatched = (movie) => {
-    return watched?.some((con) => con.imdbID === movie.imdbID);
+    return context.watched?.some((con) => con.imdbID === movie.imdbID);
   };
 
   useEffect(() => {
@@ -38,38 +36,42 @@ export default function MovieCard({
   const handleAddFavorite = useCallback(
     (e) => {
       e.preventDefault();
-      setFavorites((prev) => [...prev, movie]);
+      context.setFavorites((prev) => [...prev, movie]);
       console.log("Added to favorites");
     },
-    [setFavorites, movie]
+    [context, movie]
   );
 
   //function to handle delete favorite
   const handleDeleteFavorite = useCallback(
     (e) => {
       e.preventDefault();
-      setFavorites((prev) => prev.filter((con) => con.imdbID !== movie.imdbID));
+      context.setFavorites((prev) =>
+        prev.filter((con) => con.imdbID !== movie.imdbID)
+      );
       console.log("Deleted from favorites");
     },
-    [setFavorites, movie]
+    [context, movie]
   );
   const handleAddWatched = useCallback(
     (e) => {
       e.preventDefault();
 
-      setWatched((prev) => [...prev, movie]);
+      context.setWatched((prev) => [...prev, movie]);
       console.log("Added to watched");
     },
-    [setWatched, movie]
+    [context, movie]
   );
 
   const handleDeleteWatched = useCallback(
     (e) => {
       e.preventDefault();
-      setWatched((prev) => prev.filter((con) => con.imdbID !== movie.imdbID));
+      context.setWatched((prev) =>
+        prev.filter((con) => con.imdbID !== movie.imdbID)
+      );
       console.log("Deleted from watched");
     },
-    [setWatched, movie]
+    [context, movie]
   );
 
   return (
@@ -84,7 +86,7 @@ export default function MovieCard({
           flexDirection: "column", // Stack elements vertically
           fontFamily: "mono",
         }}
-        key={key}
+        key={movie.imdbID}
       >
         <CardHeader
           title={`${movie.Title} (${movie.Year})`}
